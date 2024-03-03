@@ -18,7 +18,25 @@ class Field:
         return str(self._value)
 
 class Name(Field):
-    pass
+    def __init__(self, value=None):
+        if value is not None:
+            self._validate_name(value)
+        super().__init__(value)
+
+    def _validate_name(self, value):
+        if not value.strip():
+            raise ValueError("Ім'я не може бути порожнім")
+        if len(value) < 3:
+            raise ValueError("Ім'я повинно містити принаймні 3 символи")
+        if any(char in value for char in "!@#$%^&*()_+=~`[]{}|;:,.<>?/'\""):
+            raise ValueError("Ім'я не може містити спеціальні символи")
+        # Список заборонених слів
+        forbidden_words = ["admin", "root", "user", "test"]
+        if any(word in value.lower() for word in forbidden_words):
+            raise ValueError("Ім'я містить заборонене слово")
+        
+    def __str__(self):
+        return str(self.value)
 
 class Phone(Field):
     def __init__(self, value):
