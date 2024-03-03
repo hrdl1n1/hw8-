@@ -104,12 +104,73 @@ def birthdays(user_input, book: AddressBook):
     """Повертає всі наближені дні народження."""
     return book.get_upcoming_birthdays()
 
+@input_error
+def search_name(user_input, book: AddressBook):
+    """Пошук контактів за частковим іменем."""
+    partial_name = user_input.split()[1]
+    matching_contacts = book.search_by_partial_name(partial_name)
+    if matching_contacts:
+        result = "\n".join(str(contact) for contact in matching_contacts)
+        return result
+    else:
+        return "Контакти за вказаним ім'ям не знайдені."
+
+@input_error
+def sort_contacts(user_input, book: AddressBook):
+    """Сортування контактів за різними полями."""
+    field = user_input.split()[1].capitalize()
+    try:
+        sorted_contacts = book.sort_contacts(field)
+        if sorted_contacts:
+            result = "\n".join(str(contact) for contact in sorted_contacts)
+            return result
+        else:
+            return "Немає контактів для сортування."
+    except ValueError as e:
+        return str(e)
+
+@input_error
+def add_group(user_input, book: AddressBook):
+    """Додавання нової групи."""
+    group_name = user_input.split()[1]
+    book.add_group(group_name)
+    return f"Групу '{group_name}' успішно додано."
+
+@input_error
+def remove_group(user_input, book: AddressBook):
+    """Видалення існуючої групи."""
+    group_name = user_input.split()[1]
+    book.remove_group(group_name)
+    return f"Групу '{group_name}' успішно видалено."
+
+@input_error
+def add_to_group(user_input, book: AddressBook):
+    """Додавання контакту до групи."""
+    group_name, contact_name = user_input.split()[1:]
+    contact = book.find(contact_name)
+    if contact:
+        book.add_contact_to_group(contact, group_name)
+        return f"Контакт '{contact_name}' успішно додано до групи '{group_name}'."
+    else:
+        return f"Контакт '{contact_name}' не знайдено."
+
+@input_error
+def remove_from_group(user_input, book: AddressBook):
+    """Видалення контакту з групи."""
+    group_name, contact_name = user_input.split()[1:]
+    contact = book.find(contact_name)
+    if contact:
+        book.remove_contact_from_group(contact, group_name)
+        return f"Контакт '{contact_name}' успішно видалено з групи '{group_name}'."
+    else:
+        return f"Контакт '{contact_name}' не знайдено."
+
 def main():
     """Основна функція програми."""
     book = load_data()  # Відновлення даних
 
     print("Ласкаво просимо до помічника!")
-    print(
+    print(f"{Fore.BLUE}Список доступних команд: {Fore.RESET}\n"
     f"{Fore.GREEN}add{Fore.RESET}\n"
     f"{Fore.YELLOW}change{Fore.RESET}\n"
     f"{Fore.BLUE}phone{Fore.RESET}\n"
@@ -123,7 +184,11 @@ def main():
     f"{Fore.CYAN}add-to-group{Fore.RESET}\n"
     f"{Fore.RED}remove-from-group{Fore.RESET}\n"
     f"{Fore.GREEN}hello{Fore.RESET}\n"
-    f"{Fore.YELLOW}close{Fore.RESET} або {Fore.YELLOW}exit{Fore.RESET}")
+    f"{Fore.RED}notify-birthdays{Fore.RESET}\n"
+    f"{Fore.YELLOW}search-name{Fore.RESET}"
+    f"{Fore.YELLOW}close{Fore.RESET} або {Fore.YELLOW}exit{Fore.RESET}\n"
+    
+)
     while True:
         user_input = input("Введіть команду: ")
         command, *args = parse_input(user_input)
