@@ -177,11 +177,11 @@ class AddressBook(UserDict):
         return upcoming_birthdays
 
     def sort_contacts(self, field):
-        if field == "ім'я":
+        if field == "Name":
             return sorted(self.data.values(), key=lambda x: x.name.value)
-        elif field == "телефон":
+        elif field == "Phone":
             return sorted(self.data.values(), key=lambda x: x.phones[0].value if x.phones else '')
-        elif field == "дата народження":
+        elif field == "Birthday":
             return sorted(self.data.values(), key=lambda x: x.birthday.value if x.birthday else '')
         else:
             raise ValueError("Непідтримуване поле для сортування.")
