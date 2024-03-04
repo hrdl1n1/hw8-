@@ -62,7 +62,7 @@ def phone(user_input, book: AddressBook):
     name = user_input.split()[1]
     record = book.find(name)
     if record:
-        return record  # Зміна тут
+        return ', '.join(str(phone) for phone in record.phones)
     else:
         return "Контакт не знайдено."
 
